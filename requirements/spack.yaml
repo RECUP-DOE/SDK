@@ -1,0 +1,12 @@
+spack:
+  specs:
+  - python@3.10
+
+  config:
+    install_tree:
+      root: /opt/spack
+
+  packages:
+    all:
+      require: 'target=x86_64_v3'
+
