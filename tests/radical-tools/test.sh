@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# consider to use EnTK+Darshan example:
+# TODO: use EnTK+Darshan example:
 #    radical.entk/examples/misc/darshan_enabled.py
 
 if which radical-pilot-version >/dev/null; then

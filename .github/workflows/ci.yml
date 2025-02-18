@@ -13,6 +13,9 @@ jobs:
   tests-pip:
     name: Tests with PIP package manager
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tool: [ 'radical-tools' ]
     env:
       ENV_NAME: recup-env
     steps:
@@ -22,23 +25,24 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: 3.10
-    - name: Create environment
+    - name: ${{ matrix.python-version }} - create environment
       run: |
         python -m venv ${{ env.ENV_NAME }}
         . ${{ env.ENV_NAME }}/bin/activate
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install -r ./requirements/pip.txt
+        python -m pip install -r ./builds/${{ matrix.tool }}/pip.txt
         python -m pip cache purge
-    - name: Test RADICAL tools
+    - name: ${{ matrix.python-version }} - run tests
       run: |
         . ${{ env.ENV_NAME }}/bin/activate
-        for component in radical-tools; do
-          bash -c tests/${component}/test.sh";
-        done
+        bash -c "tests/${{ matrix.python-version }}/test.sh";
 
   tests-spack:
     name: Tests with SPACK package manager
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tool: [ 'radical-tools' ]
     env:
       ENV_NAME: recup-env
     steps:
@@ -50,7 +54,7 @@ jobs:
         ref: develop      # Spack version (examples: develop, releases/v0.23)
         buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
         path: spack       # Where to clone Spack
-    - name: Create environment
+    - name: ${{ matrix.python-version }} - create environment
       shell: spack-bash {0}
       run: |
         spack env create ${{ env.ENV_NAME }}
@@ -58,9 +62,9 @@ jobs:
         spack config add concretizer:unify:when_possible
         spack config add concretizer:reuse:false
         spack config add config:db_lock_timeout:300
-        spack -e ./requirements concretize
-        spack -e ./requirements install
-    - name: Test tools
+        spack -e ./builds/${{ matrix.python-version }} concretize
+        spack -e ./builds/${{ matrix.python-version }} install
+    - name: ${{ matrix.python-version }} - run tests
       shell: spack-bash {0}
       run: |
         spack env activate ${{ env.ENV_NAME }}
