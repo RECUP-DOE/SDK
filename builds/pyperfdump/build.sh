@@ -23,7 +23,7 @@ rm -rf build/ && mkdir build && cd build
 set +e
 cmake "-DUSE_MPI:BOOL=$usempi" \
       "-DENABLE_HDF5:BOOL=$enablehdf5" \
-      "pyperfdump/"
+      "../pyperfdump/"
 make
 make install
 
