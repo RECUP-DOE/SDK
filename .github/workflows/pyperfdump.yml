@@ -1,0 +1,109 @@
+name: CI tests for RECUP components
+on:
+  # https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event
+  repository_dispatch:
+    types: [ ci-on-demand ]
+  # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule
+  # schedule:
+  #   - cron: '30 10 * * *'
+
+
+jobs:
+
+  tests-pip:
+    name: Tests with PIP package manager
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tool: [ 'radical-tools' ]
+    env:
+      ENV_NAME: recup-env
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.10
+    - name: ${{ matrix.python-version }} - create environment
+      run: |
+        python -m venv ${{ env.ENV_NAME }}
+        . ${{ env.ENV_NAME }}/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install -r ./builds/${{ matrix.tool }}/pip.txt
+        python -m pip cache purge
+    - name: ${{ matrix.python-version }} - run tests
+      run: |
+        . ${{ env.ENV_NAME }}/bin/activate
+        bash -c "tests/${{ matrix.python-version }}/test.sh";
+
+  tests-spack:
+    name: Tests with SPACK package manager
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tool: [ 'radical-tools' ]
+    env:
+      ENV_NAME: recup-env
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    - uses: spack/setup-spack@v2
+      with:
+        ref: develop      # Spack version (examples: develop, releases/v0.23)
+        buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
+        path: spack       # Where to clone Spack
+    - name: ${{ matrix.python-version }} - create environment
+      shell: spack-bash {0}
+      run: |
+        spack env create ${{ env.ENV_NAME }}
+        spack env activate ${{ env.ENV_NAME }}
+        spack config add concretizer:unify:when_possible
+        spack config add concretizer:reuse:false
+        spack config add config:db_lock_timeout:300
+        spack -e ./builds/${{ matrix.python-version }} concretize
+        spack -e ./builds/${{ matrix.python-version }} install
+    - name: ${{ matrix.python-version }} - run tests
+      shell: spack-bash {0}
+      run: |
+        spack env activate ${{ env.ENV_NAME }}
+        spack env status
+
+  tests-cmake:
+    name: Tests with CMake
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tool: [ 'pyperfdump' ]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Setup Requirements for Serial PyPerfDump
+      run: |
+        sudo sh -c 'echo -1 >/prov/sys/kernel/perf_event_paranoid'
+        sudo apt update
+        sudo apt install  build-essential python3-dev \
+                          papi-tools libpapi-dev \
+                          libhdf5-dev hdf5-tools
+    - name: Build and Test Serial PyPerfDump
+      run: |
+        cd builds/pyperfdump/
+        git clone https://github.com/RECUP-DOE/pyperfdump.git
+        ./build.sh
+        cd ../../tests/pyperfdump/
+        ./test.sh
+        cd ../../builds/pyperfdump
+    - name: Setup Requirements for Parallel PyPerfDump
+      run: |
+        sudo apt purge libhdf5-dev hdf5-tools
+        sudo apt install  openmpi-bin python3-mpi4py \
+                          libhdf5-openmpi-dev hdf5-tools
+    - name: Build and Test Parallel PyPerfDump
+      run: |
+        ./build.sh
+        cd ../../tests/pyperfdump/
+        ./test.sh
+
