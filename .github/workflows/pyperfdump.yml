@@ -17,7 +17,7 @@ jobs:
         python-version: '3.12'
     - name: Setup Requirements for Serial PyPerfDump
       run: |
-        sudo sh -c 'echo -1 >/prov/sys/kernel/perf_event_paranoid'
+        sudo sh -c 'echo -1 >/proc/sys/kernel/perf_event_paranoid'
         sudo apt update
         sudo apt install  build-essential python3-dev \
                           papi-tools libpapi-dev \
