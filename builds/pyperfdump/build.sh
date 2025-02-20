@@ -18,9 +18,8 @@ havehdf5="$?"
 [ "$havehdf5" -eq 0 ] && enablehdf5="ON" || enablehdf5="OFF"
 
 # fresh build directory
-set -e
-rm -rf build/ && mkdir build && cd build
-set +e
+[ -d "build/" ] && rm -rf build/
+mkdir build && cd build
 cmake "-DUSE_MPI:BOOL=$usempi" \
       "-DENABLE_HDF5:BOOL=$enablehdf5" \
       "../pyperfdump/"
