@@ -17,7 +17,7 @@ jobs:
         python-version: '3.12'
     - name: Setup Requirements for Serial PyPerfDump
       run: |
-        sudo sh -c 'echo -1 >/proc/sys/kernel/perf_event_paranoid'
+        sudo sysctl kernel.perf_event_paranoid=-1
         sudo apt update
         sudo apt install  build-essential python3-dev \
                           papi-tools libpapi-dev \
@@ -25,11 +25,10 @@ jobs:
     - name: Build and Test Serial PyPerfDump
       run: |
         cd builds/pyperfdump/
-        git clone https://github.com/RECUP-DOE/pyperfdump.git
         ./build.sh
         cd ../../tests/pyperfdump/
         ./test.sh
-    - name: Setup Requirements for Parallel PyPerfDump
+    - name: Change Requirements for Parallel PyPerfDump
       run: |
         sudo apt purge libhdf5-dev hdf5-tools
         sudo apt install  openmpi-bin python3-mpi4py \
