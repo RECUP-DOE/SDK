@@ -29,9 +29,6 @@ jobs:
         ./build.sh
         cd ../../tests/pyperfdump/
         ./test.sh
-        cd ../../builds/pyperfdump/
-        pwd
-        ls
     - name: Setup Requirements for Parallel PyPerfDump
       run: |
         sudo apt purge libhdf5-dev hdf5-tools
@@ -39,8 +36,7 @@ jobs:
                           libhdf5-openmpi-dev hdf5-tools
     - name: Build and Test Parallel PyPerfDump
       run: |
-        pwd
-        ls
+        cd builds/pyperfdump/
         ./build.sh
         cd ../../tests/pyperfdump/
         ./test.sh
