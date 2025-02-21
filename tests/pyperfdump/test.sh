@@ -16,17 +16,16 @@ fi
 # To avoid arbitrarily selecting a counter that isn't available,
 # we will just list all potential counters as "selected" counters
 # a subset of valid counters will be automatically chosen
-PAPI_EVENTS="$(papi_avail | grep -E "Yes[ ]+(No|Yes)" | awk '{print $1}')"
-for event in $PAPI_EVENTS ; do
-  [ -n "$PDUMP_EVENTS" ] && PDUMP_EVENTS=",$PDUMP_EVENTS"
-  PDUMP_EVENTS="$event$PDUMP_EVENTS"
-done
 PAPI_EVENTS="$(papi_native_avail | grep "::" | awk '{print $2}')"
 for event in $PAPI_EVENTS ; do
   [ -n "$PDUMP_EVENTS" ] && PDUMP_EVENTS=",$PDUMP_EVENTS"
   PDUMP_EVENTS="$event$PDUMP_EVENTS"
 done
-
+PAPI_EVENTS="$(papi_avail | grep -E "Yes[ ]+(No|Yes)" | awk '{print $1}')"
+for event in $PAPI_EVENTS ; do
+  [ -n "$PDUMP_EVENTS" ] && PDUMP_EVENTS=",$PDUMP_EVENTS"
+  PDUMP_EVENTS="$event$PDUMP_EVENTS"
+done
 # If no counters are found, or none of these work, then PAPI won't work
 if [ -z "$PDUMP_EVENTS" ] ; then
   echo "No possible PAPI counters found
@@ -79,8 +78,10 @@ else
   cmd="python3 demo.py"
   h5file="perf_dump.h5"
 fi
+[ -n "$h5file" ] && [ -f "$h5file" ] && rm "$h5file"
 # same csv output filename for with/out mpi
 csvfile="perf_dump.csv"
+[ -f "$csvfile" ] && rm "$csvfile"
 
 # run the test
 $cmd
