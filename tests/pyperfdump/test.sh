@@ -80,7 +80,7 @@ else
   cmd="python3 demo.py"
   h5file="perf_dump.h5"
 fi
-[ -n "$h5file" ] && [ -f "$h5file" ] && rm "$h5file"
+[ -f "$h5file" ] && rm "$h5file"
 # same csv output filename for with/out mpi
 csvfile="perf_dump.csv"
 [ -f "$csvfile" ] && rm "$csvfile"
@@ -103,6 +103,7 @@ if [ "$havehdf5" -eq 0 ] ; then
   fi
   # Generate a csv output now
   export PDUMP_OUTPUT_FORMAT=csv
+  echo "$cmd"
   $cmd
 fi
 if ! grep -q "Runtime" "$csvfile" ; then
