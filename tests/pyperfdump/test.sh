@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+echo "$0"
+
 # pyperfdump library not found in PYTHONPATH
 if ! python -c 'import pyperfdump' 2>/dev/null ; then
   echo "PyPerfDump module not found"
@@ -84,6 +86,7 @@ csvfile="perf_dump.csv"
 [ -f "$csvfile" ] && rm "$csvfile"
 
 # run the test
+echo "$cmd"
 $cmd
 
 # we have an hdf5 output file
