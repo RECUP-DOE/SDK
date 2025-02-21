@@ -35,7 +35,6 @@ jobs:
                           libhdf5-openmpi-dev hdf5-tools
     - name: Build and Test Parallel PyPerfDump
       run: |
-        which mpiexec
         export PYTHONPATH="/usr/lib/python3/dist-packages:$PYTHONPATH"
         cd builds/pyperfdump/
         ./build.sh
