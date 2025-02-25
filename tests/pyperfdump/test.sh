@@ -92,26 +92,34 @@ $cmd
 # we have an hdf5 output file
 if [ "$havehdf5" -eq 0 ] ; then
   if [ ! -f "$h5file" ] ; then
-    echo "Expected HDF5 output file not found"
-    ls
+    echo "No HDF5 output file"
+    havehdf5=1
   elif [ ! -s "$h5file" ] ; then
-    echo "HDF5 output file is empty"
+    echo "HDF5 output file is empty and shouldn't be"
   elif ! h5dump "$h5file" | grep -q "Runtime" ; then
     echo "HDF5 file output doesn't contain runtime and should"
   else
     echo "HDF5 output appears correct"
   fi
-  # Generate a csv output now
-  export PDUMP_OUTPUT_FORMAT=csv
-  echo "$cmd"
-  $cmd
+  if [ "$havehdf5" -eq 0 ] ; then
+    # Generate a csv output now
+    export PDUMP_OUTPUT_FORMAT=csv
+    echo "$cmd"
+    $cmd
+  fi
 fi
-if ! grep -q "Runtime" "$csvfile" ; then
-  echo "csv output doesn't contain runtime and should"
+if [ ! -f "$csvfile" ] ; then
+  echo "No csv output file"
+  exit 1
+elif [ ! -s "$csvfile" ] ; then
+  echo "csv output file is empty and shouldn't be"
+  exit 1
+elif ! grep -q "Runtime" "$csvfile" ; then
+  echo "csv output doesn't contain Runtime and should"
   exit 1
 else
   echo "csv output appears correct"
 fi
 
-echo "Test complete"
+echo "Test successful"
 exit 0
