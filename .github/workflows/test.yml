@@ -1,0 +1,8 @@
+name: Test reusable workflow
+on:
+  push:
+    branches:
+      - 'pyperfdump'
+jobs:
+  pyperfdump:
+    uses: ./.github/workflows/pyperfdump.yml

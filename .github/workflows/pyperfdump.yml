@@ -1,8 +1,4 @@
 name: CI test for PyPerfDump
-on:
-  push:
-    branches:
-      - 'pyperfdump'
 jobs:
   tests-cmake:
     name: Tests with CMake
