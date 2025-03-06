@@ -1,4 +1,6 @@
 name: CI test for PyPerfDump
+on:
+  workflow_call:
 jobs:
   tests-cmake:
     name: Tests with CMake
