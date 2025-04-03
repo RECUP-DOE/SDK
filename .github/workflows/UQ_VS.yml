@@ -1,0 +1,26 @@
+name: CI test for UQ_VS
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'  # Adjust based on your needs
+
+      - name: Install dependencies
+        run: |
+          cd builds/UQ_VS/
+          ./build.sh
+          
+
+      - name: Run tests
+        run: |
+          ../../tests/UQ_VS/test.sh
