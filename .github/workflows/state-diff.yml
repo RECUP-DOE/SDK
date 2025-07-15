@@ -1,0 +1,11 @@
+name: Caller CI for statediff-RECUP
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  run-shared-workflow:
+    uses: RECUP-DOE/statediff-RECUP/.github/workflows/ci.yml@main
+    with:
+      build-type: Debug
