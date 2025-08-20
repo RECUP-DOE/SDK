@@ -15,7 +15,7 @@ jobs:
           uses: actions/checkout@v4
 
         - name: Fetch Docker Compose file
-          run: ./builds/ci_build.sh
+          run: ./builds/wfmeta_darshan/ci_build.sh
 
         - name: Use Docker Compose to Run Tests
           uses: adambirds/docker-compose-action@v1.5.0
