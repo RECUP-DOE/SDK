@@ -1,0 +1,13 @@
+name: Integration Test for wfmeta-darshan
+
+on:
+  workflow_call:
+    
+jobs:
+    build:
+      name: Run an integration test for wfmeta-darshan
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Pull Darshan Repository
+          uses: actions/checkout@v4
