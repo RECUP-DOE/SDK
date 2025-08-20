@@ -22,5 +22,5 @@ jobs:
           with:
             compose-file: './docker-compose.yml'
             test-container: 'CI'
-            test-command: './tests/wfmeta_darshan/ci_test.sh'
+            test-command: './host/tests/wfmeta_darshan/ci_test.sh'
 
