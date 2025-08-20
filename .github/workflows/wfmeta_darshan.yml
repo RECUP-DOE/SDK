@@ -1,6 +1,8 @@
 name: Integration Test for wfmeta-darshan
 
 on:
+  push: 
+    branches: darshan_parsing
   workflow_call:
     
 jobs:
@@ -9,5 +11,16 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-        - name: Pull Darshan Repository
+        - name: Checkout repo
           uses: actions/checkout@v4
+
+        - name: Fetch Docker Compose file
+          run: ./builds/ci_build.sh
+
+        - name: Use Docker Compose to Run Tests
+          uses: adambirds/docker-compose-action@v1.5.0
+          with:
+            compose-file: './docker-compose.yml'
+            test-container: 'CI'
+            test-command: './tests/wfmeta_darshan/ci_test.sh'
+
