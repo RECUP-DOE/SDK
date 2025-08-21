@@ -1,0 +1,3 @@
+[submodule "tutorials/state-diff/statediff-RECUP"]
+	path = tutorials/state-diff/statediff-RECUP
+	url = https://github.com/RECUP-DOE/statediff-RECUP.git
